@@ -1,3 +1,6 @@
+use std::cmp::PartialEq;
+mod vertex;
+
 #[cfg(test)]
 mod tests {
     #[test]
