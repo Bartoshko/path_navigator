@@ -1,2 +1,18 @@
 # path_navigator
-rust, lib, crate, path navigator, direction, gps, 
+
+UNDER DEVELOPMENT
+
+This is crate allowing to calculate shortest path between two coordinates on given path.
+
+Looking for contributors.
+
+## Installation
+
+```
+[dependencies]
+path_navigation = "0.1.0"
+```
+## Contributors
+
+Bartosz Lenart (mashroom)
+
