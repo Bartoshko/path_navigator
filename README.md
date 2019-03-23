@@ -10,9 +10,9 @@ Looking for contributors.
 
 ```
 [dependencies]
-path_navigation = "0.1.0"
+path_navigator = "0.1.0"
 ```
-## Contributors
+## Contributors:
 
 Bartosz Lenart (mashroom)
 
