@@ -1,9 +1,16 @@
 use crate::PartialEq;
+use crate::errors::*;
 
 #[derive(Debug, Clone)]
 pub struct Point {
     lat: f64,
     lng: f64,
+}
+
+impl Point {
+    pub fn new(lat: f64, lng: f64) -> Self {
+        Self {lat, lng}
+    }
 }
 
 impl PartialEq for Point {
@@ -18,15 +25,24 @@ pub struct Connection {
     finish: Point,
 }
 
-impl PartialEq for Connection {
-    fn eq(&self, other: &Self) -> bool {
-        self.start == other.start && self.finish == other.finish
+impl Connection {
+    pub fn new(start: Point, finish: Point) -> Self {
+        Self {start, finish}
+    }
+
+    fn distance_cost(&self) -> f64 {
+        // TODO: timplement distance cost calculation based on lat lng degrees
+        // IDEA: take to account earth radius, and implement for other planets of solar system
+        // this can be achieved using enum SpaceObject::EARTH, SpaceObject::MOON,
+        // SpaceObject::URANUS,
+        // Add altitude factor
+        0_f64
     }
 }
 
-impl Connection {
-    fn new(start: Point, finish: Point) -> Self {
-        Self {start, finish}
+impl PartialEq for Connection {
+    fn eq(&self, other: &Self) -> bool {
+        self.start == other.start && self.finish == other.finish
     }
 }
 
@@ -42,12 +58,6 @@ struct VertexPoint {
     graphs: Vec<GraphRelation>,
 }
 
-impl PartialEq for VertexPoint {
-    fn eq(&self, other: &Self) -> bool {
-       self.coordinates == other.coordinates
-   }
-}
-
 impl VertexPoint {
     fn new(coordinates: Point) -> Self {
         let graphs = Vec::new();
@@ -57,40 +67,89 @@ impl VertexPoint {
     fn push_relation(&mut self, graph_relation: GraphRelation) {
         self.graphs.push(graph_relation);
     }
+
+    fn has_point(&self, other: &Point) -> bool {
+        self.coordinates == *other
+    }
 }
 
+impl PartialEq for VertexPoint {
+    fn eq(&self, other: &Self) -> bool {
+       self.coordinates == other.coordinates
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct VertexBuffer {
     vector: Vec<VertexPoint>
 }
 
 impl VertexBuffer {
-   fn new(connections: Vec<Connection>) -> Self {
-       // TODO: add coonections to vector
-       let vector = Vec::new();
-        Self {vector}
+   pub fn new(connections: Vec<Connection>) -> Result<Self> {
+        let vector = Vec::new();
+        let mut vertex_buffer = Self {vector};
+        if !vertex_buffer.is_connections_vec_correct(&connections) {
+            return Err(Error::from_kind(ErrorKind::DataItemIncorrect));
+        }
+        connections.iter().for_each(|conn| vertex_buffer.append(conn.clone()));
+        Ok(vertex_buffer)
+    }
+
+    fn is_connections_vec_correct(&self, connections: &Vec<Connection>) -> bool {
+        if connections.len() == 0 {
+            return false;
+        }
+        for connection in connections {
+            if connection.start == connection.finish {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn append(&mut self, connection: Connection) {
+        let start_index_option: Option<usize> = self
+            .vector
+            .iter()
+            .position(|r| r.has_point(&connection.start));
+        let end_index_option: Option<usize> = self
+            .vector
+            .iter()
+            .position(|r| r.has_point(&connection.finish));
+        let start_vertex_index = match start_index_option {
+            Some(v) => v,
+            None => self.add(connection.start.clone()),
+        };
+        let end_vertex_index = match end_index_option {
+            Some(v) => v,
+            None => self.add(connection.finish.clone()),
+        };
+        let cost: f64 = connection.distance_cost();
+        &mut self.update(&start_vertex_index, &end_vertex_index, cost.clone());
+        &mut self.update(&end_vertex_index, &start_vertex_index, cost.clone());
+    }
+
+    fn add(&mut self, coordinates: Point) -> usize {
+        // TODO: implement add to vertex buffer method
+       1 
+    }
+
+    fn update(&mut self, index_to_update: &usize, index_releted: &usize, cost: f64) {
+        // TODO: implement update vertex buffer method
     }
 }
 
+#[cfg(test)]
+mod test {
+   use super::*;
 
+   #[test]
+   fn test_point() {
+        let point_0 = Point::new(20.99, 10.12);
+        let point_1 = Point::new(20_98_f64,10.12_f64);
+        let point_2 = Point::new(20.99_f64, 10.12_f64);
+        assert!(point_0 != point_1);
+        assert!(point_0 == point_2);
+   }
+}
 
-//    fn append_to_vertex_matrix(&mut self, line: Line) {
-//        let start_vertex_index_option: Option<usize> = self
-//            .dijkstra_vertex_matrix
-//            .iter()
-//            .position(|r| r.is_equal(&line.start));
-//        let end_vertex_index_option: Option<usize> = self
-//            .dijkstra_vertex_matrix
-//            .iter()
-//            .position(|r| r.is_equal(&line.finish));
-//        let start_vertex_index: i32 = match start_vertex_index_option {
-//            Some(v) => v as i32,
-//            None => self.add_new_vertex(line.start.copy()),
-//        };
-//        let end_vertex_index: i32 = match end_vertex_index_option {
-//            Some(v) => v as i32,
-//            None => self.add_new_vertex(line.finish.copy()),
-//        };
-//        let cost: f64 = line.length();
-//        &mut self.update_vertex_matrix(&start_vertex_index, &end_vertex_index, &cost);
-//        &mut self.update_vertex_matrix(&end_vertex_index, &start_vertex_index, &cost);
-//}

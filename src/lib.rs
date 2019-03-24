@@ -1,5 +1,9 @@
+#[macro_use]
+extern crate error_chain;
+
 use std::cmp::PartialEq;
 mod vertex;
+mod errors;
 
 #[cfg(test)]
 mod tests {

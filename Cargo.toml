@@ -17,3 +17,5 @@ include = [
 ]
 
 [dependencies]
+error-chain = "0.11"
+
