@@ -4,6 +4,7 @@ extern crate error_chain;
 use std::cmp::PartialEq;
 mod vertex;
 mod errors;
+mod data;
 
 #[cfg(test)]
 mod tests {

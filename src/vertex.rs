@@ -1,5 +1,6 @@
 use crate::PartialEq;
 use crate::errors::*;
+use crate::data::*;
 
 #[derive(Debug, Clone)]
 pub struct Point {
@@ -30,12 +31,8 @@ impl Connection {
         Self {start, finish}
     }
 
-    fn distance_cost(&self) -> f64 {
-        // TODO: timplement distance cost calculation based on lat lng degrees
-        // IDEA: take to account earth radius, and implement for other planets of solar system
-        // this can be achieved using enum SpaceObject::EARTH, SpaceObject::MOON,
-        // SpaceObject::URANUS,
-        // Add altitude factor
+    fn distance_cost(&self, radius: f64) -> f64 {
+        
         0_f64
     }
 }
@@ -87,13 +84,14 @@ impl PartialEq for VertexPoint {
 
 #[derive(Debug, Clone)]
 pub struct VertexBuffer {
-    vector: Vec<VertexPoint>
+    celestial_object: CelestialObject,
+    vector: Vec<VertexPoint>,
 }
 
 impl VertexBuffer {
-   pub fn new(connections: Vec<Connection>) -> Result<Self> {
+   pub fn new(connections: Vec<Connection>, celestial_object: CelestialObject) -> Result<Self> {
         let vector = Vec::new();
-        let mut vertex_buffer = Self {vector};
+        let mut vertex_buffer = Self {celestial_object, vector};
         if !vertex_buffer.is_connections_vec_correct(&connections) {
             return Err(Error::from_kind(ErrorKind::DataItemIncorrect));
         }
