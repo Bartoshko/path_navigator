@@ -52,6 +52,12 @@ struct GraphRelation {
     cost: f64,
 }
 
+impl GraphRelation {
+    pub fn new(vertex_index: usize, cost: f64) -> Self {
+        Self {vertex_index, cost}
+    }
+}
+
 #[derive(Debug, Clone)]
 struct VertexPoint {
     coordinates: Point,
@@ -130,12 +136,17 @@ impl VertexBuffer {
     }
 
     fn add(&mut self, coordinates: Point) -> usize {
-        // TODO: implement add to vertex buffer method
-       1 
+        self.vector.push(VertexPoint::new(coordinates));
+        self.vector.len() - 1
     }
 
-    fn update(&mut self, index_to_update: &usize, index_releted: &usize, cost: f64) {
-        // TODO: implement update vertex buffer method
+    fn update(&mut self, index_to_update: &usize, index_related: &usize, cost: f64) {
+        if self.vector[*index_to_update].graphs.iter()
+            .position(|rel| rel.vertex_index == *index_related)
+            .is_none() {
+                &mut self.vector[*index_to_update].graphs
+                .push(GraphRelation::new(*index_related, cost));
+        }
     }
 }
 
