@@ -32,8 +32,13 @@ impl Connection {
     }
 
     fn distance_cost(&self, radius: f64) -> f64 {
-        
-        0_f64
+        let fi = (self.finish.lat - self.start.lat).to_radians();
+        let fi_1 = self.start.lat.to_radians();
+        let fi_2 = self.finish.lat.to_radians();
+        let lambda = (self.finish.lng - self.start.lng).to_radians();
+        let a = (fi / 2_f64).sin().powi(2) + fi_1.cos() * fi_2.cos() * (lambda / 2_f64).sin().powi(2);
+        let c = 2_f64 * a.sqrt().atan2((1_f64 - a).sqrt());
+        radius * c
     }
 }
 
@@ -128,7 +133,8 @@ impl VertexBuffer {
             Some(v) => v,
             None => self.add(connection.finish.clone()),
         };
-        let cost: f64 = connection.distance_cost();
+        let radius = get_radius_km(&self.celestial_object);
+        let cost: f64 = connection.distance_cost(radius);
         &mut self.update(&start_vertex_index, &end_vertex_index, cost.clone());
         &mut self.update(&end_vertex_index, &start_vertex_index, cost.clone());
     }

@@ -10,7 +10,7 @@ pub enum CelestialObject {
     NEPTUNE,
 }
 
-pub fn get_radius_km(celestial_object: CelestialObject) -> f64 {
+pub fn get_radius_km(celestial_object: &CelestialObject) -> f64 {
     match celestial_object {
         CelestialObject::MERCURY => 2_439.7_f64,
         CelestialObject::VENUS => 6_051.8_f64,
