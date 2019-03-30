@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate error_chain;
 
+// use dbg;
 use std::cmp::PartialEq;
 mod vertex;
 mod errors;

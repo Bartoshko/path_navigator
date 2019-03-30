@@ -31,7 +31,7 @@ impl Connection {
         Self {start, finish}
     }
 
-    fn distance_cost(&self, radius: f64) -> f64 {
+    fn haversian_cost(&self, radius: f64) -> f64 {
         let fi = (self.finish.lat - self.start.lat).to_radians();
         let fi_1 = self.start.lat.to_radians();
         let fi_2 = self.finish.lat.to_radians();
@@ -134,7 +134,7 @@ impl VertexBuffer {
             None => self.add(connection.finish.clone()),
         };
         let radius = get_radius_km(&self.celestial_object);
-        let cost: f64 = connection.distance_cost(radius);
+        let cost: f64 = connection.haversian_cost(radius);
         &mut self.update(&start_vertex_index, &end_vertex_index, cost.clone());
         &mut self.update(&end_vertex_index, &start_vertex_index, cost.clone());
     }
@@ -166,5 +166,21 @@ mod test {
         assert!(point_0 != point_1);
         assert!(point_0 == point_2);
    }
-}
 
+   #[test]
+   fn test_connection() {
+       let point_0 = Point::new(33.3386, 44.3939); // Bagdad
+       let point_1 = Point::new(34.6937, 135.502); // Osaka
+       let point_2 = Point::new(-36.8667, 174.767); // Warsaw
+       let point_3 = Point::new(52.25, 21_f64); // Auckland
+       let connection_0 = Connection::new(point_0, point_1);
+       let connection_1 = Connection::new(point_2, point_3);
+       // test Bagdad to Osaka
+       let radius = get_radius_km(&CelestialObject::EARTH);
+       let distance_b_o = connection_0.haversian_cost(radius);
+       assert_eq!(8069, distance_b_o as u32);
+       // test Warsaw to Auckland
+       let distance_w_a = connection_1.haversian_cost(radius);
+       assert_eq!(17349, distance_w_a as u32);
+   }
+}
