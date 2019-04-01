@@ -2,7 +2,7 @@ use crate::PartialEq;
 use std::fmt;
 
 /// # Point
-/// Geographical Point (Point) contains latitude and longitiude coordinates.
+/// Geographical Point (Point) contains latitude and longitude coordinates.
 /// * Latitude is an angle between position in north - south direction and Geographical Equator.
 /// * Longitude is an angle between position in west - east direction and Prime Meridian Point.
 ///
@@ -11,21 +11,34 @@ use std::fmt;
 /// * Longitude can take values from -180 to 180 degrees.
 ///
 /// ## Constructing Point
+/// ```
+/// use path_navigator::connection::Point;
 /// let point = Point::new(12.11, 45_f64);
-///
+/// ```
 /// # Connection
 /// Geographical Connection (Connection) between two given Geographical Points (Points);
 /// Connection direction has no impact on cost calculation which is in this case haversian distance calculation.
+///
 /// ## Constructing Connection
+/// ```
+/// use path_navigator::connection::{Point, Connection};
 /// let point_a = Point::new(1_f64, 16.0);
 /// let point_b = Point::new(-12.0, -122.1);
 /// let connection = Connection::new(point_a, point_b);
+/// ```
 ///
 /// ## Calculating cost - haversian distance, Altitude changes on connection are not taken to
 /// account. Cost calculation assumes that travel is on the same altitude which is geographical
 /// radius of celestial body.
-/// let earth_radus = get_radius_km(CelestialBody::Earth);
-/// let cost_earth = connection.(earth_radius);
+/// ```
+/// use path_navigator::connection::{Point, Connection};
+/// use path_navigator::data::*;
+/// let point_a = Point::new(1_f64, 16.0);
+/// let point_b = Point::new(-12.0, -122.1);
+/// let connection = Connection::new(point_a, point_b);
+/// let earth_radius = get_radius_km(&CelestialObject::EARTH);
+/// let cost_earth = connection.cost(earth_radius);
+/// ```
 ///
 /// ## Formula
 /// hav_a = sin²(Δφ/2) + cos φ1 ⋅ cos φ2 ⋅ sin²(Δλ/2)

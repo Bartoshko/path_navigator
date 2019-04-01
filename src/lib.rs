@@ -3,10 +3,12 @@ extern crate error_chain;
 
 // use dbg;
 use std::cmp::PartialEq;
-mod vertex;
+
 mod errors;
-mod data;
-mod connection;
+
+pub mod vertex;
+pub mod data;
+pub mod connection;
 
 #[cfg(test)]
 mod tests {

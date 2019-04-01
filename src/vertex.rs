@@ -26,10 +26,6 @@ impl VertexPoint {
         Self {coordinates, graphs}
     }
 
-    fn push_relation(&mut self, graph_relation: GraphRelation) {
-        self.graphs.push(graph_relation);
-    }
-
     fn has_point(&self, other: &Point) -> bool {
         self.coordinates == *other
     }
