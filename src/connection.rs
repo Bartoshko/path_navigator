@@ -119,31 +119,32 @@ mod test {
 
    #[test]
    fn test_connection() {
-       let point_0 = Point::new(33.3386, 44.3939); // Bagdad
-       let point_1 = Point::new(34.6937, 135.502); // Osaka
-       let point_2 = Point::new(-36.8667, 174.767); // Warsaw
-       let point_3 = Point::new(52.25, 21_f64); // Aucklan
-       let point_4 = Point::new(13.75, 100.517); // Bangkok
-       let point_5 = Point::new(55.7522, 37.6156); // Moscow
-       let point_6 = Point::new(54.4167, 13.4333); // Bergen
-       let point_7 = Point::new(54.35, 18.6667); // Gdansk
-       let connection_0 = Connection::new(point_0, point_1);
-       let connection_1 = Connection::new(point_2, point_3);
-       let connection_2 = Connection::new(point_4, point_5);
-       let connection_3 = Connection::new(point_6, point_7);
-       // test Bagdad to Osaka
-       let radius = get_radius_km(&CelestialObject::EARTH);
-       let distance_b_o = connection_0.cost(radius);
-       assert_eq!(8069, distance_b_o as u32);
-       // test Warsaw to Auckland
-       let distance_w_a = connection_1.cost(radius);
-       assert_eq!(17349, distance_w_a as u32);
-       // test Bangkok to Moscow
-       let distance_b_m = connection_2.cost(radius);
-       assert_eq!(7065, distance_b_m as u32);
-       // test Gdansk to Bergen
-       let distance_g_b = connection_3.cost(radius);
-       assert_eq!(338, distance_g_b  as u32);
+        let point_0 = Point::new(33.3386, 44.3939); // Bagdad
+        let point_1 = Point::new(34.6937, 135.502); // Osaka
+        let point_2 = Point::new(-36.8667, 174.767); // Warsaw
+        let point_3 = Point::new(52.25, 21_f64); // Aucklan
+        let point_4 = Point::new(13.75, 100.517); // Bangkok
+        let point_5 = Point::new(55.7522, 37.6156); // Moscow
+        let point_6 = Point::new(54.4167, 13.4333); // Bergen
+        let point_7 = Point::new(54.35, 18.6667); // Gdansk
+        let point_8 = Point::new(43.000350, -75.499900); // New York
+        let point_9 = Point::new(59.91273, 10.74609); // Oslo
+        let connection_0 = Connection::new(point_0, point_1);
+        let connection_1 = Connection::new(point_2, point_3);
+        let connection_2 = Connection::new(point_4, point_5);
+        let connection_3 = Connection::new(point_6, point_7);
+        let connection_4 = Connection::new(point_8, point_9); 
+        let radius = get_radius_km(&CelestialObject::EARTH);
+        // test Bagdad to Osaka
+        assert_eq!(8069, connection_0.cost(radius) as u32);
+        // test Warsaw to Auckland;
+        assert_eq!(17349, connection_1.cost(radius) as u32);
+        // test Bangkok to Moscow
+        assert_eq!(7065, connection_2.cost(radius) as u32);
+        // test Gdansk to Bergen
+        assert_eq!(338, connection_3.cost(radius)  as u32);
+        // test New York to Oslo
+        assert_eq!(5794, connection_4.cost(radius) as u32);
    }
 }
 
