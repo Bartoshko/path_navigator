@@ -6,11 +6,12 @@ use std::cmp::PartialEq;
 mod vertex;
 mod errors;
 mod data;
+mod connection;
 
 #[cfg(test)]
 mod tests {
     #[test]
-    fn it_works() {
+    fn test_it_works() {
         assert_eq!(2 + 2, 4);
     }
 }

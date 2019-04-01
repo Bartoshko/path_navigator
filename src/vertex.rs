@@ -1,52 +1,6 @@
-use crate::PartialEq;
 use crate::errors::*;
 use crate::data::*;
-
-#[derive(Debug, Clone)]
-pub struct Point {
-    lat: f64,
-    lng: f64,
-}
-
-impl Point {
-    pub fn new(lat: f64, lng: f64) -> Self {
-        Self {lat, lng}
-    }
-}
-
-impl PartialEq for Point {
-    fn eq(&self, other: &Self) -> bool {
-        self.lat == other.lat && self.lng == other.lng
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Connection {
-    start: Point,
-    finish: Point,
-}
-
-impl Connection {
-    pub fn new(start: Point, finish: Point) -> Self {
-        Self {start, finish}
-    }
-
-    fn haversian_cost(&self, radius: f64) -> f64 {
-        let fi = (self.finish.lat - self.start.lat).to_radians();
-        let fi_1 = self.start.lat.to_radians();
-        let fi_2 = self.finish.lat.to_radians();
-        let lambda = (self.finish.lng - self.start.lng).to_radians();
-        let a = (fi / 2_f64).sin().powi(2) + fi_1.cos() * fi_2.cos() * (lambda / 2_f64).sin().powi(2);
-        let c = 2_f64 * a.sqrt().atan2((1_f64 - a).sqrt());
-        radius * c
-    }
-}
-
-impl PartialEq for Connection {
-    fn eq(&self, other: &Self) -> bool {
-        self.start == other.start && self.finish == other.finish
-    }
-}
+use crate::connection::*;
 
 #[derive(Debug, Clone)]
 struct GraphRelation {
@@ -134,7 +88,7 @@ impl VertexBuffer {
             None => self.add(connection.finish.clone()),
         };
         let radius = get_radius_km(&self.celestial_object);
-        let cost: f64 = connection.haversian_cost(radius);
+        let cost: f64 = connection.cost(radius);
         &mut self.update(&start_vertex_index, &end_vertex_index, cost.clone());
         &mut self.update(&end_vertex_index, &start_vertex_index, cost.clone());
     }
@@ -154,33 +108,4 @@ impl VertexBuffer {
     }
 }
 
-#[cfg(test)]
-mod test {
-   use super::*;
 
-   #[test]
-   fn test_point() {
-        let point_0 = Point::new(20.99, 10.12);
-        let point_1 = Point::new(20_98_f64,10.12_f64);
-        let point_2 = Point::new(20.99_f64, 10.12_f64);
-        assert!(point_0 != point_1);
-        assert!(point_0 == point_2);
-   }
-
-   #[test]
-   fn test_connection() {
-       let point_0 = Point::new(33.3386, 44.3939); // Bagdad
-       let point_1 = Point::new(34.6937, 135.502); // Osaka
-       let point_2 = Point::new(-36.8667, 174.767); // Warsaw
-       let point_3 = Point::new(52.25, 21_f64); // Auckland
-       let connection_0 = Connection::new(point_0, point_1);
-       let connection_1 = Connection::new(point_2, point_3);
-       // test Bagdad to Osaka
-       let radius = get_radius_km(&CelestialObject::EARTH);
-       let distance_b_o = connection_0.haversian_cost(radius);
-       assert_eq!(8069, distance_b_o as u32);
-       // test Warsaw to Auckland
-       let distance_w_a = connection_1.haversian_cost(radius);
-       assert_eq!(17349, distance_w_a as u32);
-   }
-}
