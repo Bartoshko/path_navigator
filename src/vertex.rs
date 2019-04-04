@@ -1,6 +1,6 @@
 use crate::errors::*;
 use crate::data::*;
-use crate::connection::*;
+use crate::components::*;
 
 #[derive(Debug, Clone)]
 struct GraphRelation {
@@ -15,23 +15,23 @@ impl GraphRelation {
 }
 
 #[derive(Debug, Clone)]
-struct VertexPoint {
-    coordinates: Point,
+struct VertexSpherePoint {
+    coordinates: SpherePoint,
     graphs: Vec<GraphRelation>,
 }
 
-impl VertexPoint {
-    fn new(coordinates: Point) -> Self {
+impl VertexSpherePoint {
+    fn new(coordinates: SpherePoint) -> Self {
         let graphs = Vec::new();
         Self {coordinates, graphs}
     }
 
-    fn has_point(&self, other: &Point) -> bool {
+    fn has_point(&self, other: &SpherePoint) -> bool {
         self.coordinates == *other
     }
 }
 
-impl PartialEq for VertexPoint {
+impl PartialEq for VertexSpherePoint {
     fn eq(&self, other: &Self) -> bool {
        self.coordinates == other.coordinates
     }
@@ -40,11 +40,11 @@ impl PartialEq for VertexPoint {
 #[derive(Debug, Clone)]
 pub struct VertexBuffer {
     celestial_object: CelestialObject,
-    vector: Vec<VertexPoint>,
+    vector: Vec<VertexSpherePoint>,
 }
 
 impl VertexBuffer {
-   pub fn new(connections: Vec<Connection>, celestial_object: CelestialObject) -> Result<Self> {
+   pub fn new(connections: Vec<SphereConnection>, celestial_object: CelestialObject) -> Result<Self> {
         let vector = Vec::new();
         let mut vertex_buffer = Self {celestial_object, vector};
         if !vertex_buffer.is_connections_vec_correct(&connections) {
@@ -54,7 +54,11 @@ impl VertexBuffer {
         Ok(vertex_buffer)
     }
 
-    fn is_connections_vec_correct(&self, connections: &Vec<Connection>) -> bool {
+   fn len(&self) -> usize {
+       self.vector.len()
+   }
+
+    fn is_connections_vec_correct(&self, connections: &Vec<SphereConnection>) -> bool {
         if connections.len() == 0 {
             return false;
         }
@@ -66,7 +70,7 @@ impl VertexBuffer {
         true
     }
 
-    fn append(&mut self, connection: Connection) {
+    fn append(&mut self, connection: SphereConnection) {
         let start_index_option: Option<usize> = self
             .vector
             .iter()
@@ -89,8 +93,8 @@ impl VertexBuffer {
         &mut self.update(&end_vertex_index, &start_vertex_index, cost.clone());
     }
 
-    fn add(&mut self, coordinates: Point) -> usize {
-        self.vector.push(VertexPoint::new(coordinates));
+    fn add(&mut self, coordinates: SpherePoint) -> usize {
+        self.vector.push(VertexSpherePoint::new(coordinates));
         self.vector.len() - 1
     }
 
@@ -104,4 +108,27 @@ impl VertexBuffer {
     }
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
 
+    #[test]
+    fn test_vertex() {
+        // given
+        let mut connections: Vec<SphereConnection> = Vec::new();
+        let mut first_point = SpherePoint::new(0.00_f64, 0.00_f64);
+        let mut second_point = SpherePoint::new(5.00_f64, 15.00_f64);
+        for _ in 0..100 {
+            let connection = SphereConnection::new(first_point.clone(), second_point.clone());
+            connections.push(connection);
+            first_point = second_point.clone();
+            second_point.lat += 5.00_f64;
+            second_point.lng += 15.00_f64;
+        }
+        // when
+        let vertex_buffer = VertexBuffer::new(connections.clone(), CelestialObject::MARS);
+        // then
+        assert!(vertex_buffer.is_ok());
+        assert_eq!(connections.len() + 1, vertex_buffer.unwrap().len());
+    }
+}

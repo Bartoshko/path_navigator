@@ -8,7 +8,7 @@ mod errors;
 
 pub mod vertex;
 pub mod data;
-pub mod connection;
+pub mod components;
 
 #[cfg(test)]
 mod tests {
