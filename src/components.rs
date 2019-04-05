@@ -122,15 +122,18 @@ mod test {
 
    #[test]
    fn test_point() {
+       // given
         let point_0 = SpherePoint::new(20.99, 10.12);
         let point_1 = SpherePoint::new(20_98_f64,10.12_f64);
         let point_2 = SpherePoint::new(20.99_f64, 10.12_f64);
+        // when, then
         assert!(point_0 != point_1);
         assert!(point_0 == point_2);
    }
 
    #[test]
    fn test_long_connection() {
+       // given
         let point_0 = SpherePoint::new(33.3386, 44.3939); // Bagdad
         let point_1 = SpherePoint::new(34.6937, 135.502); // Osaka
         let point_2 = SpherePoint::new(-36.8667, 174.767); // Warsaw
@@ -141,12 +144,14 @@ mod test {
         let point_7 = SpherePoint::new(54.35, 18.6667); // Gdansk
         let point_8 = SpherePoint::new(43.000350, -75.499900); // New York
         let point_9 = SpherePoint::new(59.91273, 10.74609); // Oslo
+        // when
         let connection_0 = SphereConnection::new(point_0, point_1);
         let connection_1 = SphereConnection::new(point_2, point_3);
         let connection_2 = SphereConnection::new(point_4, point_5);
         let connection_3 = SphereConnection::new(point_6, point_7);
         let connection_4 = SphereConnection::new(point_8, point_9);
         let radius = get_radius_km(&CelestialObject::EARTH);
+        // then
         // test Bagdad to Osaka
         assert_eq!(8069, connection_0.cost(radius) as u32);
         // test Warsaw to Auckland;
@@ -161,10 +166,13 @@ mod test {
 
    #[test]
    fn test_short_connection() {
+       // given
        let point_0 = SpherePoint::new(54.424579, 18.595444);
        let point_1 = SpherePoint::new(54.426383, 18.592333);
+       // when
        let short_connection = SphereConnection::new(point_0, point_1);
        let radius = get_radius_km(&CelestialObject::EARTH);
+       // then
        assert_eq!(284, (short_connection.cost(radius) * 1000_f64) as u32);
    }
 }

@@ -2,6 +2,35 @@ use crate::errors::*;
 use crate::data::*;
 use crate::components::*;
 
+/// Vertex Buffer (VB).
+/// Vertex Buffer stores nodes of each connection alongside with relation to other nodes and travel
+/// cost.
+/// Each node has minimum one connection with other node, and cost of this connection can be
+/// calculated using haversine formula.
+/// All nodes have their own vertex index in VertexBuffer and individual graph that represents indexes of nodes to which given
+/// node is connected alongside with cost to reach this nodes.
+/// In this way VertexBuffer stors vector of costs between all nodes and coordiante of each node.
+/// VertexBuffer is used by DjikstraAlgorithm to calculate travel cost between any two nodes whithout need to go trough all nodes.
+/// For more information go to DijkstraAlgorithm documentation.
+///
+/// # Theory
+///
+/// [Vertex](https://en.wikipedia.org/wiki/Vertex_(geometry))
+///
+/// # Example
+///
+/// ```
+/// use path_navigator::components::*;
+/// use path_navigator::vertex::*;
+/// use path_navigator::data::*;
+///
+/// let connections: Vec<SphereConnection> = vec![SphereConnection::new(SpherePoint::new(0.00, 0.00),
+/// SpherePoint::new(10.00, 24.00))];
+/// let venus = CelestialObject::VENUS;
+/// let vertex_buffer = VertexBuffer::new(connections, venus);
+/// ```
+///
+
 #[derive(Debug, Clone)]
 struct GraphRelation {
     vertex_index: usize,
@@ -113,7 +142,24 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_vertex() {
+    fn test_vertex_creation() {
+        // given
+        let mut connections_correct: Vec<SphereConnection> = Vec::new();
+        let mut connections_incorrect: Vec<SphereConnection> = Vec::new();
+        let first_point = SpherePoint::new(0.00, 0.00);
+        let second_point = SpherePoint::new(1.0, 2.0);
+        // when
+        connections_correct.push(SphereConnection::new(first_point.clone(), second_point.clone()));
+        connections_incorrect.push(SphereConnection::new(first_point.clone(), first_point.clone()));
+        let vertex_buffer_correct = VertexBuffer::new(connections_correct, CelestialObject::SATURN);
+        let vertex_buffer_incorrect = VertexBuffer::new(connections_incorrect, CelestialObject::SATURN);
+        // then
+        assert!(vertex_buffer_correct.is_ok());
+        assert!(vertex_buffer_incorrect.is_err());
+    }
+
+    #[test]
+    fn test_vertex_for_single_line() {
         // given
         let mut connections: Vec<SphereConnection> = Vec::new();
         let mut first_point = SpherePoint::new(0.00_f64, 0.00_f64);
@@ -132,3 +178,4 @@ mod test {
         assert_eq!(connections.len() + 1, vertex_buffer.unwrap().len());
     }
 }
+
