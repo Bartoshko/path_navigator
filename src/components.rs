@@ -153,15 +153,15 @@ mod test {
         let radius = get_radius_km(&CelestialObject::EARTH);
         // then
         // test Bagdad to Osaka
-        assert_eq!(8069, connection_0.cost(radius) as u32);
+        relative_eq!(8069.0, connection_0.cost(radius));
         // test Warsaw to Auckland;
-        assert_eq!(17349, connection_1.cost(radius) as u32);
+        relative_eq!(17349.0, connection_1.cost(radius));
         // test Bangkok to Moscow
-        assert_eq!(7065, connection_2.cost(radius) as u32);
+        relative_eq!(7065.0, connection_2.cost(radius));
         // test Gdansk to Bergen
-        assert_eq!(338, connection_3.cost(radius)  as u32);
+        relative_eq!(338.0, connection_3.cost(radius));
         // test New York to Oslo
-        assert_eq!(5794, connection_4.cost(radius) as u32);
+        relative_eq!(5794.0, connection_4.cost(radius));
     }
 
    #[test]
@@ -173,7 +173,7 @@ mod test {
        let short_connection = SphereConnection::new(point_0, point_1);
        let radius = get_radius_km(&CelestialObject::EARTH);
        // then
-       assert_eq!(284, (short_connection.cost(radius) * 1000_f64) as u32);
+       relative_eq!(0.284, short_connection.cost(radius));
    }
 }
 
