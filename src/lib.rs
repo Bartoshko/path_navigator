@@ -1,7 +1,20 @@
+#[macro_use] extern crate error_chain;
+#[macro_use] extern crate approx;
+
+// use dbg;
+use std::cmp::PartialEq;
+
+mod errors;
+
+pub mod vertex;
+pub mod data;
+pub mod components;
+
 #[cfg(test)]
 mod tests {
     #[test]
-    fn it_works() {
+    fn test_it_works() {
         assert_eq!(2 + 2, 4);
     }
 }
+

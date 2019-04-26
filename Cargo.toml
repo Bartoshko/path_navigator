@@ -3,5 +3,20 @@ name = "path_navigator"
 version = "0.1.0"
 authors = ["mashroom <lenart.consulting@gmail.com>"]
 edition = "2018"
+description = "Path navigation library. Calculates shortes or cheapest path between given coordinates"
+keywords = ["Path finder", "Navigation", "Dijkstra", "Vertex"]
+license = "MIT"
+repository = "https://github.com/bartoshko/path_navigator"
+documentation = ""
+readme = "README.md"
+categories = ["science", "algorithms"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
 
 [dependencies]
+error-chain = "0.11"
+approx = "0.3.2"
+
