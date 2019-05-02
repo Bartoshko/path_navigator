@@ -43,7 +43,7 @@ impl Dijkstra {
             .coordinates
             .clone();
         while actual_index_from_parent != self.start_index {
-            actual_index_from_parent = self.parents[&actual_index_from_parent].unwrap(); // all indexes are Some(_) as they are walked trough
+            actual_index_from_parent = self.parents[&actual_index_from_parent].unwrap(); // all parent are Some(_) as they are walked trough
             current_start_point = vertex.vector[actual_index_from_parent]
                 .coordinates
                 .clone();
