@@ -136,3 +136,71 @@ fn get_closest_point(point: &SpherePoint, vertex: &VertexBuffer) -> usize {
     });
     index
 }
+
+#[cfg(test)]
+mod djikstra_tests {
+    use super::*;
+    use crate::vertex::VertexBuffer;
+    use crate::components::{SphereConnection, SpherePoint};
+    use crate::data::CelestialObject;
+
+    #[test]
+    fn test_shortest_path_calculations() {
+        // given:
+        let mut paths: Vec<SphereConnection> = Vec::new();
+        let mut known_shortest_path: Vec<SphereConnection> = Vec::new();
+        // calculate left arm
+        let mut point_a: SpherePoint;
+        let mut point_b: SpherePoint = SpherePoint::new(0.0, 0.0);
+        for i in 0..10 {
+            if i > 0 {
+                point_a = point_b.clone();
+                point_b = SpherePoint::new(i as f64, 0.0);
+                paths.push(SphereConnection::new(point_a.clone(), point_b.clone()))
+            } else {
+                point_b = SpherePoint::new(i as f64 * 0.0, i as f64 * 0.0);
+            }
+        }
+        paths.push(SphereConnection::new(point_b, SpherePoint::new(10.0, 10.0)));
+
+        // calculate right arm
+        point_b = SpherePoint::new(0.0, 0.0);
+        for i in 0..10 {
+            if i > 0 {
+                point_a = point_b.clone();
+                point_b = SpherePoint::new(0.0, i as f64);
+                paths.push(SphereConnection::new(point_a.clone(), point_b.clone()))
+            } else {
+                point_b = SpherePoint::new(i as f64 * 0.0, i as f64 * 0.0);
+            }
+        }
+        paths.push(SphereConnection::new(point_b, SpherePoint::new(10.0, 10.0)));
+        
+        // calculate right diagonal
+        point_b = SpherePoint::new(0.0, 0.0);
+        for i in 0..11 {
+            if i > 0 {
+                point_a = point_b.clone();
+                point_b = SpherePoint::new(i as f64, i as f64);
+                paths.push(SphereConnection::new(point_a.clone(), point_b.clone()));
+                known_shortest_path.push(SphereConnection::new(point_a.clone(), point_b.clone()));
+            } else {
+                point_b = SpherePoint::new(i as f64 * 0.0, i as f64 * 0.0);
+            }
+        }
+        
+        // when:
+        let vertex = VertexBuffer::new(paths, CelestialObject::MERCURY).unwrap();
+        let shortest_path = find_shortest_path(&SpherePoint::new(0.0, 0.0), &SpherePoint::new(10.0, 10.0), &vertex).unwrap();
+        let mut calc_cost = 0.0_f64;
+        let mut known_cost = 0.0_f64;
+        let radius = get_radius_km(&CelestialObject::MERCURY);
+        for i in 0..10 {
+            let connection_calculated = shortest_path[i].clone();
+            let conenction_known = known_shortest_path[i].clone();
+            calc_cost += connection_calculated.cost(radius);
+            known_cost += conenction_known.cost(radius);
+        }
+        relative_eq!(calc_cost, known_cost);
+    }
+}

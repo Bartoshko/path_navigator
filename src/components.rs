@@ -116,7 +116,7 @@ impl fmt::Display for SphereConnection {
 }
 
 #[cfg(test)]
-mod test {
+mod components_tests {
    use super::*;
    use crate::data::*;
 
