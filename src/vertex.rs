@@ -73,7 +73,7 @@ pub struct VertexBuffer {
 }
 
 impl VertexBuffer {
-   pub fn new(connections: Vec<SphereConnection>, celestial_object: CelestialObject) -> Result<Self> {
+    pub fn new(connections: Vec<SphereConnection>, celestial_object: CelestialObject) -> Result<Self> {
         let vector = Vec::new();
         let mut vertex_buffer = Self {celestial_object, vector};
         if !vertex_buffer.is_connections_vec_correct(&connections) {

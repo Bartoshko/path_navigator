@@ -47,7 +47,7 @@ impl Dijkstra {
             current_start_point = vertex.vector[actual_index_from_parent]
                 .coordinates
                 .clone();
-            result.push( SphereConnection::new(current_start_point.clone(), current_end_point.clone()));
+            result.push(SphereConnection::new(current_start_point.clone(), current_end_point.clone()));
             current_end_point = current_start_point.clone();
         }
         result.reverse();
@@ -110,7 +110,7 @@ impl Dijkstra {
 
 pub fn find_shortest_path(start: &SpherePoint, finish: &SpherePoint, vertex: &VertexBuffer) 
 -> Option<Vec<SphereConnection>> {
-    if start == finish {
+    if start == finish || vertex.vector.len() == 0 {
         return None;
     }
     let start_index: usize = get_closest_point(&start, &vertex);
@@ -176,7 +176,7 @@ mod djikstra_tests {
         }
         paths.push(SphereConnection::new(point_b, SpherePoint::new(10.0, 10.0)));
         
-        // calculate right diagonal
+        // calculate diagonal
         point_b = SpherePoint::new(0.0, 0.0);
         for i in 0..11 {
             if i > 0 {
@@ -191,6 +191,8 @@ mod djikstra_tests {
         
         // when:
         let vertex = VertexBuffer::new(paths, CelestialObject::MERCURY).unwrap();
+
+        // then:
         let shortest_path = find_shortest_path(&SpherePoint::new(0.0, 0.0), &SpherePoint::new(10.0, 10.0), &vertex).unwrap();
         let mut calc_cost = 0.0_f64;
         let mut known_cost = 0.0_f64;
@@ -202,5 +204,28 @@ mod djikstra_tests {
             known_cost += conenction_known.cost(radius);
         }
         relative_eq!(calc_cost, known_cost);
+    }
+
+    #[test]
+    fn test_shortest_path_not_possible_to_find() {
+        //  when:
+        let mut path: Vec<SphereConnection> = Vec::new();
+        path.push(SphereConnection::new(SpherePoint::new(0.0, 0.0), SpherePoint::new(10.0, 10.0)));
+        let vertex: VertexBuffer = VertexBuffer::new(path, CelestialObject::URANUS).unwrap();
+        // given:
+        let point: SpherePoint = SpherePoint::new(123.123, 456.123);
+        let point_very_close: SpherePoint = SpherePoint::new(124.1, 456.1);
+
+        // then:
+        let is_path_calculated = match find_shortest_path(&point, &point, &vertex) {
+            Some(_) => true,
+            None => false
+        };
+        assert_eq!(is_path_calculated, false);
+        let is_path_calculated = match find_shortest_path(&point, &point_very_close, &vertex) {
+            Some(_) => true,
+            None => false
+        };
+        assert_eq!(is_path_calculated, false);
     }
 }
