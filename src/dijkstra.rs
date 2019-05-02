@@ -95,6 +95,19 @@ impl Dijkstra {
     }
 }
 
+/// Returns Vec<SphereConnection> which is the shortest path between two given points.SphereConnection
+/// 
+/// # Arguments:
+/// * `start` which is &SpherePoint - start sphere point representation on given geomentry
+/// * `finish` which is &SpherePoint - finish sphere point representation on given geomentry
+/// * `vertex` which is &VertexBuffer - precalculated certex for avaliable paths on given geometry
+/// 
+/// # Remarks:
+/// 
+/// This function finds the closest point on precalculated &VertexBuffer to given start and finish points
+/// and starts shortest path calcualtion from this points.
+///
+
 pub fn find_shortest_path(start: &SpherePoint, finish: &SpherePoint, vertex: &VertexBuffer) 
 -> Option<Vec<SphereConnection>> {
     if start == finish {
