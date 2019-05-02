@@ -32,9 +32,9 @@ use crate::components::*;
 ///
 
 #[derive(Debug, Clone)]
-struct GraphRelation {
-    vertex_index: usize,
-    cost: f64,
+pub struct GraphRelation {
+    pub vertex_index: usize,
+    pub cost: f64,
 }
 
 impl GraphRelation {
@@ -44,9 +44,9 @@ impl GraphRelation {
 }
 
 #[derive(Debug, Clone)]
-struct VertexSpherePoint {
-    coordinates: SpherePoint,
-    graphs: Vec<GraphRelation>,
+pub struct VertexSpherePoint {
+    pub coordinates: SpherePoint,
+    pub graphs: Vec<GraphRelation>,
 }
 
 impl VertexSpherePoint {
@@ -68,8 +68,8 @@ impl PartialEq for VertexSpherePoint {
 
 #[derive(Debug, Clone)]
 pub struct VertexBuffer {
-    celestial_object: CelestialObject,
-    vector: Vec<VertexSpherePoint>,
+    pub celestial_object: CelestialObject,
+    pub vector: Vec<VertexSpherePoint>,
 }
 
 impl VertexBuffer {

@@ -9,6 +9,7 @@ mod errors;
 pub mod vertex;
 pub mod data;
 pub mod components;
+pub mod dijkstra;
 
 #[cfg(test)]
 mod tests {
