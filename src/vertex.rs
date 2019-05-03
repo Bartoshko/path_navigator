@@ -159,7 +159,7 @@ mod test {
     }
 
     #[test]
-    fn test_vertex_for_single_line() {
+    fn test_vertex_for_single_path() {
         // given
         let mut connections: Vec<SphereConnection> = Vec::new();
         let mut first_point = SpherePoint::new(0.00_f64, 0.00_f64);
@@ -176,6 +176,49 @@ mod test {
         // then
         assert!(vertex_buffer.is_ok());
         assert_eq!(connections.len() + 1, vertex_buffer.unwrap().len());
+    }
+
+    #[test]
+    fn test_vertex_for_multiple_paths() {
+        // given
+        let mut connections: Vec<SphereConnection> = Vec::new();
+        let mut first_point = SpherePoint::new(0.00_f64, 0.00_f64);
+        let mut second_point = SpherePoint::new(5.00_f64, 15.00_f64);
+        for _ in 0..1000 {
+            let connection = SphereConnection::new(first_point.clone(), second_point.clone());
+            connections.push(connection);
+            first_point = second_point.clone();
+            second_point.lat += 5.00_f64;
+            second_point.lng += 15.00_f64;
+        }
+        second_point.lat = 0.0;
+        second_point.lng = 0.0;
+        for _ in 0..1000 {
+            let connection = SphereConnection::new(first_point.clone(), second_point.clone());
+            connections.push(connection);
+            first_point = second_point.clone();
+            second_point.lat += 15.00_f64;
+            second_point.lng += 5.00_f64;
+        }
+        second_point.lat = 0.0;
+        second_point.lng = 0.0;
+        for _ in 0..1000 {
+            let connection = SphereConnection::new(first_point.clone(), second_point.clone());
+            connections.push(connection);
+            first_point = second_point.clone();
+            second_point.lat += 15.00_f64;
+            second_point.lng += 15.00_f64;
+        }
+        second_point.lat = 0.0;
+        second_point.lng = 0.0;
+        let connection = SphereConnection::new(first_point.clone(), second_point.clone());
+        connections.push(connection);
+        // when
+        let vertex_buffer = VertexBuffer::new(connections.clone(), CelestialObject::JUPITER);
+        // then
+        assert!(vertex_buffer.is_ok());
+        // beggining and last node of each arm are connected
+        assert_eq!(connections.len(), vertex_buffer.unwrap().len() + 2);
     }
 }
 
